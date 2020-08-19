@@ -14,6 +14,7 @@ class MultiSignatureConsent extends \ExternalModules\AbstractExternalModule {
     public $footer;
     public $saveToFileRepo;
     public $saveToExternalServer;
+    public $saveToExternalStorage;
     public $saveToAsSurvey;
 
     private static $MAKING_PDF = false;
@@ -36,8 +37,8 @@ class MultiSignatureConsent extends \ExternalModules\AbstractExternalModule {
         $this->saveToFileRepo       = $this->getProjectSetting('save-to-file-repo');
         $this->saveToExternalStorage= $this->getProjectSetting('save-to-external-storage');
         $this->saveToAsSurvey       = $this->getProjectSetting('save-to-as-survey');
-        $this::$KEEP_PAGE_BREAKS    = $this->getProjectSetting('keep-page-breaks');
-        $this::$KEEP_RECORD_ID_FIELD= $this->getProjectSetting('keep-record-id-field');
+        self::$KEEP_PAGE_BREAKS     = $this->getProjectSetting('keep-page-breaks');
+        self::$KEEP_RECORD_ID_FIELD = $this->getProjectSetting('keep-record-id-field');
 
         $instances = $this->getProjectSetting('form-name');
         foreach ($instances as $pdfKey => $instanceDetails) {
@@ -90,7 +91,7 @@ class MultiSignatureConsent extends \ExternalModules\AbstractExternalModule {
                     }
 
                     // Skip record id field unless told otherwise
-                    if (! $this::$KEEP_RECORD_ID_FIELD &&
+                    if (! self::$KEEP_RECORD_ID_FIELD[$pdfKey] &&
                         $field_meta['field_order'] == 1
                     ) {
                         continue;
@@ -98,7 +99,7 @@ class MultiSignatureConsent extends \ExternalModules\AbstractExternalModule {
 
                     // In order to get all signatures on 'same page' of PDF
                     // I make it appear as all fields are on the first form
-                    if (! $this::$KEEP_PAGE_BREAKS &&
+                    if (! self::$KEEP_PAGE_BREAKS[$pdfKey] &&
                         $field_meta['form_name'] !== $instrument
                     ) {
                         $field_meta['form_name'] = $instrument;
